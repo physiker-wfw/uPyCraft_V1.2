@@ -4,7 +4,8 @@
 import sys
 import time
 import threading
-import esptool
+# import esptool
+import Esp
 import urllib
 from urllib import request
 import socket
@@ -48,7 +49,7 @@ class threadUserFirmware(QThread):
         # self.connect(esptool,SIGNAL("percentchange"),self.updateFirmwarePer)
         # self.connect(esptool,SIGNAL("eraseStart"),self.eraseStart)
         esptool.percentchange.connect(self.updateFirmwarePer)
-        esptool.eraseStart.connect(self.eraseStart)
+        esptool.sig_eraseStart.connect(self.eraseStart)
 
         if self.iserase=="yes":
             self.erasetimer=threading.Timer(0.1,self.eraseTimer)
@@ -133,6 +134,11 @@ class threadUserFirmware(QThread):
         self.erasetimer.start()
 
 class threadDownloadFirmware(QThread):
+    sig_firmwareAnyErase = pyqtSignal(int)
+    sig_firmwareAnyUpdate = pyqtSignal(int)
+    sig_firmwareAnyDown = pyqtSignal(int)
+    sig_goMicrobitUpdate = pyqtSignal()
+
     def __init__(self, url, board, savepath, com, iserase, size, addr, parent):
         # super(threadDownloadFirmware,self).__init__(parent)
         super().__init__()
@@ -167,7 +173,7 @@ class threadDownloadFirmware(QThread):
             # self.connect(esptool,SIGNAL("percentchange"),self.updateFirmwarePer)
             # self.connect(esptool,SIGNAL("eraseStart"),self.eraseStart)
             esptool.percentchange.connect(self.updateFirmwarePer)
-            esptool.eraseStart.connect(self.eraseStart)
+            esptool.sig_eraseStart.connect(self.eraseStart)
 
             if self.iserase=="yes":
                 self.erasetimer=threading.Timer(0.1,self.eraseTimer)

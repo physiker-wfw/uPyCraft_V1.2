@@ -252,6 +252,7 @@ class MainWidget(QMainWindow):
                 flags=True
                 break
         if flags is False:
+            return      # WFW: Skip the Font installation
             checkfont=QMessageBox.question(self,"SourceCodePro Font",
                                     "Please install SourceCodePro font",
                                     QMessageBox.Ok|QMessageBox.Cancel,
@@ -2589,14 +2590,14 @@ class MainWidget(QMainWindow):
                 myfile=open("%s/opt/uPyCraft/update.json"%rootDirectoryPath,"r")
                 page = myfile.read()
                 myfile.close()
-                #print page
+                print(page)
                 jsonmsg=json.loads(page)
                 firmwareList=jsonmsg["firmware"]
-                #print firmwareList
+                print(firmwareList)
                 try:
                     url = firmwareList[str(self.updateBin.boardComboBox.currentText())][0]["url"]
                 except:
-                    self.terminal.append("Please reOpne the uPy.")
+                    self.terminal.append("Please reOpen the program uPyCraft.")
 
                 self.firmwareNameList=url.split("/")
                 self.updateSize=firmwareList[str(self.updateBin.boardComboBox.currentText())][0]["size"]
@@ -2624,10 +2625,13 @@ class MainWidget(QMainWindow):
                 # self.connect(self.firmwareAny,SIGNAL("firmwareAnyErase"),self.firmwareAnyErase)
                 # self.connect(self.firmwareAny,SIGNAL("firmwareAnyUpdate"),self.firmwareAnyUpdate)
                 # self.connect(self.firmwareAny,SIGNAL("goMicrobitUpdate"),self.microbitUpdate)
-                self.firmwareAny.firmwareAnyDown.connect(self.firmwareAnyDown)
-                self.firmwareAny.firmwareAnyErase.connect(self.firmwareAnyErase)
-                self.firmwareAny.firmwareAnyUpdate.connect(self.firmwareAnyUpdate)
-                self.firmwareAny.goMicrobitUpdate.connect(self.microbitUpdate)
+
+                # WFW: Modified for existing PySignals:
+                self.firmwareAny.sig_firmwareAnyDown.connect(self.firmwareAnyDown)
+                
+                self.firmwareAny.sig_firmwareAnyErase.connect(self.firmwareAnyErase)
+                self.firmwareAny.sig_firmwareAnyUpdate.connect(self.firmwareAnyUpdate)
+                self.firmwareAny.sig_goMicrobitUpdate.connect(self.microbitUpdate)
                 self.firmwareAny.start()
                 return
             else:
@@ -2641,11 +2645,11 @@ class MainWidget(QMainWindow):
                 print(userFirmwareName)
                 print("++++++++++++++++")
                 if not os.path.exists(userFirmwareName):
-                    self.terminal.append("user choosed firmware file is not exists!")
+                    self.terminal.append("user choosen firmware file does not exists!")
                     return
                 if self.updateBin.boardComboBox.currentText()=="esp8266" or self.updateBin.boardComboBox.currentText()=="esp32":
                     if userFirmwareName[-4:] != ".bin":
-                        self.terminal.append("choosed esp8266 or esp32,firmware must be '.bin' at the end.")
+                        self.terminal.append("for choosen esp8266 or esp32, firmware file must end with '.bin'.")
                         return
                 if self.updateBin.boardComboBox.currentText()=="microbit":
                     if userFirmwareName[-4:] != ".hex":
@@ -2671,6 +2675,7 @@ class MainWidget(QMainWindow):
                 else:
                     self.updateFirmwareBar=updateNewFirmwareBar("Burn Firmware",False,False)
                 self.updateFirmwareBar.show()
+                print('firmwareAny = threadUserFirmware ...')
                 self.firmwareAny=threadUserFirmware(self.updateBin.boardComboBox.currentText(),userFirmwareName,self.updateFirmwareCom,\
                                                         self.updateBin.eraseComboBox.currentText(),userFirmwareSize,\
                                                         self.updateBin.burnAddrComboBox.currentText(),self)
@@ -2678,10 +2683,10 @@ class MainWidget(QMainWindow):
                 # self.connect(self.firmwareAny,SIGNAL("firmwareAnyErase"),self.firmwareAnyErase)
                 # self.connect(self.firmwareAny,SIGNAL("firmwareAnyUpdate"),self.firmwareAnyUpdate)
                 # self.connect(self.firmwareAny,SIGNAL("goMicrobitUpdate"),self.microbitUpdate)
-                self.firmwareAny.firmwareAnyDown.connect(self.firmwareAnyDown)
-                self.firmwareAny.firmwareAnyErase.connect(self.firmwareAnyErase)
-                self.firmwareAny.firmwareAnyUpdate.connect(self.firmwareAnyUpdate)
-                self.firmwareAny.goMicrobitUpdate.connect(self.microbitUpdate)
+                self.firmwareAny.sig_firmwareAnyDown.connect(self.firmwareAnyDown)
+                self.firmwareAny.sig_firmwareAnyErase.connect(self.firmwareAnyErase)
+                self.firmwareAny.sig_firmwareAnyUpdate.connect(self.firmwareAnyUpdate)
+                self.firmwareAny.sig_goMicrobitUpdate.connect(self.microbitUpdate)
                 self.firmwareAny.start()
                 return
 
