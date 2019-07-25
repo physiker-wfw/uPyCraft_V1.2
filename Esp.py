@@ -491,7 +491,7 @@ class ESPLoader(object):
         if p != b'OHAI':
             raise FatalError("Failed to start stub. Unexpected response: %s" % p)
         print("Stub running...")
-        return self.STUB_CLASS(self)
+        return self.STUB_CLASS(self)        # WFW: self.STUB_CLASS defined ??
 
     @stub_and_esp32_function_only
     def flash_defl_begin(self, size, compsize, offset):
@@ -1714,7 +1714,7 @@ def write_flash(esp, args):
                                 CHIP_ERASE_TIMEOUT * 2)
         while len(image) > 0:
             print('\rWriting at 0x%08x... (%d %%)' % (address + seq * esp.FLASH_WRITE_SIZE, 100 * (seq + 1) // blocks), end='')
-            ESPTool.updatePer(100 * (seq + 1) / blocks)
+            esptool.updatePer(100 * (seq + 1) / blocks)
             sys.stdout.flush()
             block = image[0:esp.FLASH_WRITE_SIZE]
             if args.compress:
@@ -1835,7 +1835,8 @@ def erase_flash(esp, args):
     print('Erasing flash (this may take a while)...')
     t = time.time()
     global esptool
-    ESPTool.eraseStart()
+    esptool.eraseStart()
+    print('Finished ESPTool.eraseStart()')
     esp.erase_flash()
     print('Chip erase completed successfully in %.1fs' % (time.time() - t))
 
@@ -1993,16 +1994,17 @@ def Burn(obj,board,filename,port,erase=False,writeFlashAddr=0):
       args.chip='auto'
     global esptool
     esptool = obj
-    print('---------------------%s'%filename)
+    print('------------>>>%s'%filename, '<<<')
     if not erase:      
       for i in range(0,len(args.addr_filename)):
         args.addr_filename.pop()
       fp=open(filename,'rb')
       args.addr_filename.append((writeFlashAddr,fp))
+      print('(writeFlashAddr,fp): ',writeFlashAddr,fp,(writeFlashAddr,fp))
       args.port=port
       print(args.addr_filename)
       print('---------------------')
-      print('esptool.py v%s' % __version__)
+      print('esptool.py v%s'% __version__)
       sys.stdout.flush()
     else:
       chip='auto'
@@ -2027,7 +2029,9 @@ def Burn(obj,board,filename,port,erase=False,writeFlashAddr=0):
             esp.connect(args.before)
 
         if not args.no_stub:
-            esp = esp.run_stub()
+            returnValue = esp.run_stub()
+            print('esp.run_stub returns:', returnValue)
+            esp = returnValue
 
         if args.baud > initial_baud:
             try:

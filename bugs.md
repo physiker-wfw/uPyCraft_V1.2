@@ -1,4 +1,8 @@
+# Changes / Improvements
+- Flashing is now possible (checked on Windows 10 system)
+- The 'missing font' alert has been suppressed. 
+
 # Known bugs
 - Opened and displayed file cannot be closed anymore.
-- Flashing is not possible (File ESP.py had been simply taken from the old source at https://github.com/DFRobot/uPyCraft_src and only slightly modified.)
-- The 'missing font' alert has been suppressed. 
+- Right click on device has no effect, but is needed to add subdirectories on the device
+- Right click menu omn the device files is missing (needed to remove files there.)

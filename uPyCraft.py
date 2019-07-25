@@ -14,7 +14,7 @@ import sys
 import math
 import json
 import os
-import esptool
+# import esptool
 import shutil
 import webbrowser
 import qrc_resources
@@ -1111,7 +1111,7 @@ class MainWidget(QMainWindow):
 ###any slot function
 #File
     def slotOpenFile(self):
-        filename=str(QFileDialog.getOpenFileName(self))
+        filename, _ = QFileDialog.getOpenFileName(self)
         filename=filename.replace("\\","/")
         if filename.find(".py")<0 and \
            filename.find(".txt")<0 and \
@@ -1191,7 +1191,7 @@ class MainWidget(QMainWindow):
     def slotSaveFileAs(self):
         if self.tabWidget.currentTab<0:
             return
-        filename=QFileDialog.getSaveFileName(self)
+        filename, _ = QFileDialog.getSaveFileName(self)
         print(filename)
         if filename=="":
             return
@@ -2576,7 +2576,7 @@ class MainWidget(QMainWindow):
 
     def chooseUserFirmware(self):
         self.updateBin.hide()
-        usersFirmware=str(QFileDialog.getOpenFileName(self))
+        usersFirmware, _ = QFileDialog.getOpenFileName(self)
         self.updateBin.show()
         usersFirmware=usersFirmware.replace("\\","/")
         self.updateBin.firmwareName.setText(usersFirmware)
@@ -2647,7 +2647,11 @@ class MainWidget(QMainWindow):
         else:
             if self.updateBin.firmwareName.text()!="":
                 userFirmwareName=self.updateBin.firmwareName.text()
+                print('>>',userFirmwareName, '<<')
                 userFirmwareName=userFirmwareName.replace("\\","/")
+                # a = list(userFirmwareName)
+                # print('>>',a, '<<')
+                # userFirmwareName = a[0]
                 print("++++++++++++++++")
                 print(userFirmwareName)
                 print("++++++++++++++++")
