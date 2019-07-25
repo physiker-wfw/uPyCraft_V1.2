@@ -854,6 +854,7 @@ class myTabWidget(QTabWidget):
         self.sig_currentChanged.connect(self.currentTabChange)
 
     def closeTab(self,tabId):
+        print('tabId: ', tabId)
         if tabId<0:
             return
         tabname = self.tabText(tabId)
@@ -922,9 +923,9 @@ class myTabWidget(QTabWidget):
         editor.setAutoCompletionSource(QsciScintilla.AcsAll)
         editor.setEolMode(QsciScintilla.EolUnix)
 
-        #显示缩进参考线
+        # Show indented guides
         editor.SendScintilla(QsciScintilla.SCI_SETINDENTATIONGUIDES,QsciScintilla.SC_IV_LOOKFORWARD)
-        #设置匹配项的背景色
+        # Set the background color of setMatched
         editor.setMatchedBraceBackgroundColor(QColor(30,120,184))
 
 

@@ -98,6 +98,9 @@ class MainWidget(QMainWindow):
     sig_timerClearComMenu = pyqtSignal()
     sig_exitCheckThread = pyqtSignal()
     sig_confirmUpdate = pyqtSignal(str)
+    # sig_tabCloseRequested = pyqtSignal(int)
+    # sig_currentChanged = pyqtSignal(int)
+
 
     def __init__(self):
         super().__init__()
@@ -133,7 +136,7 @@ class MainWidget(QMainWindow):
         self.readwriteQueue=queue.Queue()
         self.uitoctrlQueue=queue.Queue()
 
-        self.inDownloadFile=False #判断是否正在下载，避免多次快速F5，导致异常
+        self.inDownloadFile=False # Determine whether it is being downloaded, avoiding multiple fast F5s, causing anomalies
 #tree
         self.tree=None
         self.createTree()
@@ -332,6 +335,7 @@ class MainWidget(QMainWindow):
         self.terminal.sig_setCursor.connect(self.slotTerminalSetCursor)
 
     def createTabWidget(self):
+        print('createTabWidget ...')
         self.tabWidget=myTabWidget(self.editorRightMenu,self.fileitem,self)
         self.tabWidget.setTabsClosable(True)
         self.tabWidget.setFont(QFont(self.tr("Source Code Pro"),10,100))
@@ -355,6 +359,9 @@ class MainWidget(QMainWindow):
 
         #self.connect(self.tabWidget, SIGNAL("tabCloseRequested(int)"),self.closeTab)
         #self.connect(self.tabWidget, SIGNAL("currentChanged(int)"),self.currentTabChange)
+        self.tabWidget.sig_tabCloseRequested.connect(self.tabWidget.closeTab)
+        self.tabWidget.sig_currentChanged.connect(self.tabWidget.currentTabChange)
+
 
     def createRightSplitter(self):
         self.rightSplitter=QSplitter(Qt.Vertical)
